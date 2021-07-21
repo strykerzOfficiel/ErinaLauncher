@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" type="text/css" href="./assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/iziToast.css">
+    <script src="assets/js/iziToast.js"></script>
+</head>
+<body>
+    <h1 style="color: white;">Bienvenue sur ErinaWorld</h1>
+    <div class="container">
+        <div class="text">            
+            <br>
+            <h1 style="color: rgb(255, 255, 255);">Connectez-vous</h1>
+            <br>
+            <p class="info">Pour ce connecter en premium: mettez votre email et mot de passe <br>
+            Pour ce connecter en crack: mettez votre pseudo <br>
+            <span class="microsoft">pour les connexion en premium, nous acceptons que les connexion de mojang. Si vous avez un compte microsoft, connectez vous en crack </span></p>
+            <form>
+                <input type="email" id="username" placeholder="Pseudo">
+                <br>
+                <br>
+                <br>
+                <input type="password" id="password" placeholder="Mot de passe">
+                <br>
+                <br>
+                <input onclick="login()" type="button" id="loginbtn" value="Connexion">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const ipc = require('electron').ipcRenderer
+        const fs = require('fs');
+
+        var loginbtn = document.getElementById('loginbtn')
+        var create = document.getElementById('create')
+
+        document.addEventListener("DOMContentLoaded", () =>{
+            let username = document.getElementById("username")
+            let password = document.getElementById("password")
+
+            fs.access('./account(NePasMontrer).json', (err) => {
+                if (!err) {
+                    let accountW = fs.readFileSync('./account(NePasMontrer).json');
+                    let account = JSON.parse(accountW);
+                    if (account.email) {
+                        username.value = account.email;
+                    }
+                    return;
+                } else if(err) {
+                    console.log(err);
+                }
+            })
+        })
+
+        function login() {
+            let accountW = {
+                email: username.value
+            }
+            let data = JSON.stringify(accountW);
+        // let username = document.getElementById("username")
+        // let password = document.getElementById("password")
+
+        if (!password) {
+            //Cracked Accounts
+            ipc.send("login", { u: username.value})
+            fs.writeFileSync('./account(NePasMontrer).json', data);
+        } else if (password) {
+            //Mojang Accounts
+            ipc.send("login", { u: username.value, p: password.value })
+            fs.writeFileSync('./account(NePasMontrer).json', data);
+        } else {
+            iziToast.error({
+                title: 'Erreur !',
+                message: 'Erreur interne',
+            });
+        }
+    }
+        
+        // loginbtn.addEventListener("click",e => {
+        //     let username = document.getElementById("username").value
+
+        //     if (username) {
+        //         loginbtn.disabled = true
+        //         loginbtn.innerHTML = 'Connexion...'
+        //         ipc.send("login", { u: username})
+        //         //loginbtn.style.display = "none"
+        //     }
+        // })
+
+        ipc.on("err", (event, data) => {
+            iziToast.error({
+                title: 'Erreur !',
+                message: 'Mauvais identifiants / Trop de requêtes !',
+            });
+            loginbtn.disabled = false
+        })
+        ipc.on("done", () => {
+            let accountW = {
+                email: username.value
+            }
+            let data = JSON.stringify(accountW);
+            fs.writeFileSync('./account(NePasMontrer).json', data);
+            iziToast.success({
+                title: 'Bienvenue !',
+                message: 'Vous vous êtes bien connecté !',
+            });
+        })
+</script>
+
+</body>
+</html>
