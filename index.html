@@ -64,7 +64,8 @@
         // let username = document.getElementById("username")
         // let password = document.getElementById("password")
 
-        if (!password) {
+        if (username.value.length >= 3){
+            if (!password) {
             //Cracked Accounts
             ipc.send("login", { u: username.value})
             fs.writeFileSync('./account(NePasMontrer).json', data);
@@ -76,8 +77,15 @@
             iziToast.error({
                 title: 'Erreur !',
                 message: 'Erreur interne',
-            });
+                });
+            }
+        } else {
+            iziToast.error({
+                title: 'Erreur !',
+                message: 'Mettez un pseudo valide !',
+                });
         }
+        
     }
         
         // loginbtn.addEventListener("click",e => {

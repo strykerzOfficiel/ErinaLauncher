@@ -37,14 +37,18 @@
     
 </div>
 
-
 <script>
     const shell = require('electron').shell
     const ipc = require('electron').ipcRenderer
     const path = require('path')
     const fs = require('fs');
+    const { Client, Authenticator} = require('minecraft-launcher-core')
+    const launcher = new Client()
 
     var welcome = document.getElementById('welcome')
+    // var launch = document.getElementById('launch')
+    // var logout = document.getElementById('logout')
+    // var settings = document.getElementById('settings')
 
     function discord() {
         shell.openExternal("https://discord.gg/9EkTEDuFVn")
@@ -61,11 +65,11 @@
     }
 
     function launch() {
+        let ramChange = fs.readFileSync('./ram.json');
+        let ram = JSON.parse(ramChange);
         var launch = document.getElementById('launch')
         var logout = document.getElementById('logout')
         var settings = document.getElementById('settings')
-        let ramChange = fs.readFileSync('./ram.json');
-        let ram = JSON.parse(ramChange);
         
         if(ram.settings.Min && ram.settings.Max){
             ipc.send("settings", { min: ram.settings.Min, max: ram.settings.Max })

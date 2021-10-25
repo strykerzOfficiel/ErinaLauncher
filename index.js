@@ -1,5 +1,7 @@
 const { app, BrowserWindow, ipcMain, ipcRenderer, } = require('electron')
+const { fstat, fstatSync} = require('fs')
 const { Client, Authenticator} = require('minecraft-launcher-core')
+const { launch } = require('msmc')
 const path = require('path')
 const launcher = new Client()
 let appdata = app.getPath("appData")
@@ -23,16 +25,20 @@ function createWindow () {
   win.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
   win.loadFile(path.join(__dirname, "index.html"))
   
+  // Pour savoir quelle type de connexion on va utiliser:
+  var authtype
+  
   // win.webContents.openDevTools()
   ipcMain.on("login", (event, data) => {
         if (!data.p) {
-          auth = Authenticator.getAuth(data.u)
+          var auth = Authenticator.getAuth(data.u)
           auth.then(() => {
               win.loadFile(path.join(__dirname, "./appcrack.html"))    
           })
           console.log("Cracked Accounts");
+          authtype = "crack";
       } else if (data.u && data.p) {
-          auth = Authenticator.getAuth(data.u, data.p)
+          var auth = Authenticator.getAuth(data.u, data.p)
           auth.then((user) => {
               win.loadFile(path.join(__dirname, "./app premium.html")).then(() => {
                   win.webContents.send("user", user)
@@ -40,26 +46,29 @@ function createWindow () {
               })    
           })
           console.log("Mojang Accounts");
+          authtype = "mojang";
       }
       // event.sender.send("done")
       // win.loadFile(path.join(__dirname, "./app.html"))
       let opts = {
-          clientPackage: "https://www.dropbox.com/s/gip94ekzir47lmo/Modpack.zip?dl=1",
+          clientPackage: "https://www.dropbox.com/s/7sy478lexou9h47/Modpack.zip?dl=1",
+          // https://www.dropbox.com/s/7sy478lexou9h47/Modpack.zip?dl=1
           authorization: auth,
           root: appdata + "/.erinaWorld",
           version: {
-              number: "1.12.2",
+              number: "1.16.5",
               type: "release"
           },
           forge: path.join(appdata + "/.erinaWorld/forge.jar"),
+          javaPath:"C:/Program Files/Java/jdk1.8.0_301/bin/java.exe",
           memory: {
-              max: "2000",
-              min: "1000"
+              max: "2000M",
+              min: "1000M"
           }
       }
 
       ipcMain.on('settings', (event, data) => {
-        opts.memory.min = data.min
+        opts.memory.min = data.min,
         opts.memory.max = data.max
       })
       
@@ -73,6 +82,13 @@ function createWindow () {
             console.log(e)
             win.webContents.send("logs", { log: e })
         });
+        // launcher.on('close', (e) => {
+          
+        //   // let launchbtn = document.getElementById('launch')
+        //   // launchbtn.disabled = false
+        //   // launchbtn.style.backgroundColor = "#0b8001"
+        //   // launchbtn.style.color = "white"
+        // });
 
 
         })

@@ -43,13 +43,18 @@
             }
 
             function saveRamSettings () {
-                let RAM_Min = document.getElementById('ramMin').value + "000"
-                let RAM_Max = document.getElementById('ramMax').value + "000"
+                let RAM_Min = document.getElementById('ramMin').value
+                let RAM_Max = document.getElementById('ramMax').value
+                var calcMin
+                var calcMax
+
+                calcMin = RAM_Min * 1024
+                calcMax = RAM_Max * 1024
                 
                 let ramChange = {
                     "settings": {
-                        Min: document.getElementById('ramMin').value + "000",
-                        Max: document.getElementById('ramMax').value + "000"
+                        Min: calcMin,
+                        Max: calcMax,
                     } 
                 }
                 console.log(RAM_Max, "", RAM_Min);
