@@ -24,7 +24,7 @@
         </div>
         <br>
         <p id="theram"></p>
-        <br> <br>
+        <br>
         <button onclick="saveRamSettings()" class="save">Sauvegardez</button>
 
 
@@ -52,7 +52,7 @@
                 calcMax = RAM_Max * 1024
                 
                 let ramChange = {
-                    "settings": {
+                    "ram": {
                         Min: calcMin,
                         Max: calcMax,
                     } 
@@ -65,7 +65,7 @@
                     })
                 } else {
                     let data = JSON.stringify(ramChange);
-                    fs.writeFileSync('./ram.json', data);
+                    fs.writeFileSync('./settings.json', data);
                     // ipc.send("settings", { min: RAM_Min, max: RAM_Max })
                     iziToast.success({
                         title: 'Succès',
@@ -75,12 +75,12 @@
             }
 
             window.onload = function () {
-                fs.access('./ram.json', (err) => {
+                fs.access('./settings.json', (err) => {
                     if (!err) {
-                        let getram = fs.readFileSync('./ram.json');
+                        let getram = fs.readFileSync('./settings.json');
                         let ram = JSON.parse(getram);
-                        if (ram.settings.Min && ram.settings.Max) {
-                            theram.innerHTML = "votre ram est de Min: " + ram.settings.Min + " Max: " + ram.settings.Max;
+                        if (ram.ram.Min && ram.ram.Max) {
+                            theram.innerHTML = "votre ram est de Min: " + ram.ram.Min + " Max: " + ram.ram.Max;
                         }
                         return;
                     } else if(err) {

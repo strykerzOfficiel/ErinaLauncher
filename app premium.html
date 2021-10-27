@@ -64,11 +64,11 @@
         var launch = document.getElementById('launch')
         var logout = document.getElementById('logout')
         var settings = document.getElementById('settings')
-        let ramChange = fs.readFileSync('./ram.json');
+        let ramChange = fs.readFileSync('./settings.json');
         let ram = JSON.parse(ramChange);
         
-        if(ram.settings.Min && ram.settings.Max){
-            ipc.send("settings", { min: ram.settings.Min, max: ram.settings.Max })
+        if(ram.settings.Min && ram.ram.Max){
+            ipc.send("settings", { min: ram.ram.Min, max: ram.ram.Max })
             launch.disabled = true
             logout.disabled = true
             settings.disabled = true
@@ -147,6 +147,18 @@
             let log = document.getElementById('console')
             log.innerHTML += "<p>" + data.log + "</p>"
             log.scrollTop = log.scrollHeight
+        });
+
+        launcher.on('close', () => {
+            let launchbtn = document.getElementById('launch')
+            launchbtn.disabled = false
+            launchbtn.style.backgroundColor = "#0b8001"
+            launchbtn.style.color = "white"
+
+          // let launchbtn = document.getElementById('launch')
+          // launchbtn.disabled = false
+          // launchbtn.style.backgroundColor = "#0b8001"
+          // launchbtn.style.color = "white"
         });
 
 </script>

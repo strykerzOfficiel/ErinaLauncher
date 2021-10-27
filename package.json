@@ -26,14 +26,15 @@
   "author": "JLSkyzer",
   "license": "MIT",
   "build": {
-    "appId": "fr.jlskyzer.erina.launcher",
+    "appId": "com.example.app",
     "productName": "ErinaWorld",
     "win": {
-      "icon": "build/icons.png",
+      "icon": "build/icon.png",
       "target": {
-        "target": "portable",
+        "target": "nsis",
         "arch": [
-          "ia32"
+          "ia32",
+          "x64"
         ]
       }
     },

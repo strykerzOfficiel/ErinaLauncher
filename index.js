@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, ipcRenderer, } = require('electron')
 const { fstat, fstatSync} = require('fs')
+const fs = require("fs");
 const { Client, Authenticator} = require('minecraft-launcher-core')
 const { launch } = require('msmc')
 const path = require('path')
@@ -26,7 +27,7 @@ function createWindow () {
   win.loadFile(path.join(__dirname, "index.html"))
   
   // Pour savoir quelle type de connexion on va utiliser:
-  var authtype
+  var jvm
   
   // win.webContents.openDevTools()
   ipcMain.on("login", (event, data) => {
@@ -60,7 +61,7 @@ function createWindow () {
               type: "release"
           },
           forge: path.join(appdata + "/.erinaWorld/forge.jar"),
-          javaPath:"C:/Program Files/Java/jdk1.8.0_301/bin/java.exe",
+          // javaPath:"C:/Program Files/Java/jdk1.8.0_301/bin/java.exe",
           memory: {
               max: "2000M",
               min: "1000M"
@@ -82,15 +83,6 @@ function createWindow () {
             console.log(e)
             win.webContents.send("logs", { log: e })
         });
-        // launcher.on('close', (e) => {
-          
-        //   // let launchbtn = document.getElementById('launch')
-        //   // launchbtn.disabled = false
-        //   // launchbtn.style.backgroundColor = "#0b8001"
-        //   // launchbtn.style.color = "white"
-        // });
-
-
         })
       })
   }
